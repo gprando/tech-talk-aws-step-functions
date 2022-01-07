@@ -1,0 +1,163 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "buscas",
+  "States": {
+    "buscas": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "buscar dados do usuário",
+          "States": {
+            "buscar dados do usuário": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "OutputPath": "$.Payload.payload",
+              "Parameters": {
+                "FunctionName": "tech-talk-aws-step-functions-dev-findUserData"
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.ServiceException",
+                    "Lambda.AWSLambdaException",
+                    "Lambda.SdkClientException"
+                  ],
+                  "IntervalSeconds": 2,
+                  "MaxAttempts": 6,
+                  "BackoffRate": 2
+                }
+              ],
+              "Comment": "ETAPA DE BUSCA DOS DADOS DO USUÁRIO",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "buscar transações",
+          "States": {
+            "buscar transações": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "OutputPath": "$.Payload.payload",
+              "Parameters": {
+                "Payload.$": "$",
+                "FunctionName": "tech-talk-aws-step-functions-dev-findUserTransactions"
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.ServiceException",
+                    "Lambda.AWSLambdaException",
+                    "Lambda.SdkClientException"
+                  ],
+                  "IntervalSeconds": 2,
+                  "MaxAttempts": 6,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultPath": "$.ParralelOutput",
+      "Next": "formatar dados"
+    },
+    "formatar dados": {
+      "Type": "Pass",
+      "Parameters": {
+        "user.$": "$.ParralelOutput[0]",
+        "transactions.$": "$.ParralelOutput[1]"
+      },
+      "OutputPath": "$",
+      "Next": "gerar relatório"
+    },
+    "gerar relatório": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload.payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "tech-talk-aws-step-functions-dev-generateUserReport"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "delay"
+    },
+    "delay": {
+      "Type": "Wait",
+      "Seconds": 1,
+      "Next": "notifica e salva"
+    },
+    "notifica e salva": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "enviar email de relatório",
+          "States": {
+            "enviar email de relatório": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "OutputPath": "$.Payload",
+              "Parameters": {
+                "Payload.$": "$",
+                "FunctionName": "tech-talk-aws-step-functions-dev-sendMailReport"
+              },
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "Lambda.ServiceException",
+                    "Lambda.AWSLambdaException",
+                    "Lambda.SdkClientException"
+                  ],
+                  "IntervalSeconds": 2,
+                  "MaxAttempts": 6,
+                  "BackoffRate": 2
+                }
+              ],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "salvar relatório",
+          "States": {
+            "salvar relatório": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::dynamodb:putItem",
+              "Parameters": {
+                "TableName": "TechTalkReport",
+                "Item": {
+                  "id": {
+                    "S.$": "$.id"
+                  },
+                  "user": {
+                    "S.$": "States.JsonToString($.user)"
+                  },
+                  "transactions": {
+                    "S.$": "States.JsonToString($.transactions)"
+                  },
+                  "report": {
+                    "S.$": "States.JsonToString($.report)"
+                  }
+                }
+              },
+              "End": true
+            }
+          }
+        }
+      ],
+      "End": true
+    }
+  }
+}

@@ -1,0 +1,88 @@
+POST http://localhost:3002/2015-03-31/functions/tech-talk-aws-step-functions-dev-sendMailReport/invocations HTTP/1.1
+content-type: application/json
+
+{
+    "transactions": [
+      {
+        "id": "53176c4e-c3f6-4975-90dc-bfd5ceb9aa41",
+        "createBy": "PeytonReinger",
+        "date": "Mon Dec 29 2036",
+        "type": "income",
+        "value": 39116
+      },
+      {
+        "id": "347b569f-7f1d-46a4-b310-1058861a56b7",
+        "createBy": "BufordGreenholt",
+        "date": "Sat May 25 1996",
+        "type": "outcome",
+        "value": 76152
+      },
+      {
+        "id": "2c55b360-37a9-4c6e-b0d1-36799785793a",
+        "createBy": "ElizabethAnkunding",
+        "date": "Sun May 22 2011",
+        "type": "income",
+        "value": 3654
+      },
+      {
+        "id": "8d5a48f2-dde3-4527-9cbe-8dcbc948ca98",
+        "createBy": "MeganeBlanda",
+        "date": "Tue Jan 24 2023",
+        "type": "outcome",
+        "value": 92958
+      },
+      {
+        "id": "123bdb9e-65b4-4bbe-a5bb-551fecc0148e",
+        "createBy": "PascaleKris",
+        "date": "Thu Jun 13 2013",
+        "type": "income",
+        "value": 86088
+      },
+      {
+        "id": "c5dd52d1-173a-4f6e-8525-3b26d0081613",
+        "createBy": "JanickVolkman",
+        "date": "Tue Aug 09 2011",
+        "type": "outcome",
+        "value": 55414
+      },
+      {
+        "id": "6b9f8f6d-c864-4acd-bd5d-798c597eb0ee",
+        "createBy": "NelleCummerata",
+        "date": "Sat Jul 31 2066",
+        "type": "income",
+        "value": 4706
+      },
+      {
+        "id": "90271e0c-9157-4508-ae2a-cebe7c4d9d90",
+        "createBy": "MariaBlanda",
+        "date": "Tue Jan 29 2047",
+        "type": "outcome",
+        "value": 77202
+      },
+      {
+        "id": "e401460e-8ee9-4585-9441-2abf44f80db6",
+        "createBy": "NolaJenkins",
+        "date": "Sun Feb 02 2076",
+        "type": "income",
+        "value": 25678
+      },
+      {
+        "id": "0c0b9098-c046-4b72-be29-f54e63064350",
+        "createBy": "OdellBahringer",
+        "date": "Tue Sep 24 2013",
+        "type": "outcome",
+        "value": 54720
+      }
+    ],
+    "user": {
+      "address": "South Toreyfort",
+      "birthday": "Thu May 13 2038",
+      "email": "Retha.Hilpert@yahoo.com",
+      "id": "5d56d17e-c65b-4ac6-a3c7-dcdeb5cf2f7b",
+      "name": "BerthaMcCullough",
+      "phone": "1-498-271-2481"
+    },
+    "report": {
+      "totalBalance": -197204
+    }
+  }
